@@ -31,7 +31,10 @@ public class AnimatedPanel extends MovingPanel{
 
         imageIcons = new ImageIcon[imageNames.length];
 
-        
+    }
+
+    public void animate(){
+
     }
 
 }
