@@ -1,32 +1,28 @@
 package com.evo.elevator;
 
-import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.context.ConfigurableApplicationContext;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
 
 @SpringBootApplication
-public class ElevatorApp extends JFrame {
+public class TruckerApp extends JFrame {
 
-	private ElevatorComponent mainComponent;
+	private TruckerMainComponent mainComponent;
 	private static int APP_WIDTH = 910;
 	private static int APP_HEIGHT = 900;
-	private static String APP_TITLE = "Elevator Madness";
+	private static String APP_TITLE = "Trucker";
 
-	public ElevatorApp() {
+	public TruckerApp() {
 
 		initUI();
 	}
 
 	private void initUI() {
 
-		mainComponent = new ElevatorComponent();
-
-
+		mainComponent = new TruckerMainComponent();
 
 		createLayout(mainComponent);
 
@@ -55,12 +51,12 @@ public class ElevatorApp extends JFrame {
 
 	public static void main(String[] args) {
 
-		ConfigurableApplicationContext ctx = new SpringApplicationBuilder(ElevatorApp.class)
+		ConfigurableApplicationContext ctx = new SpringApplicationBuilder(TruckerApp.class)
 				.headless(false).run(args);
 
 		EventQueue.invokeLater(() -> {
 
-			ElevatorApp ex = ctx.getBean(ElevatorApp.class);
+			TruckerApp ex = ctx.getBean(TruckerApp.class);
 			ex.setVisible(true);
 		});
 	}
