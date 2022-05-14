@@ -1,33 +1,43 @@
-package com.evo.elevator;
+package com.evo;
 
+import com.evo.config.AppSetting;
+import com.evo.core.TruckerMainComponent;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.context.annotation.ComponentScan;
 
 import javax.swing.*;
 import java.awt.*;
 
+
 @SpringBootApplication
+@ComponentScan({"com.evo.config","com.evo.core", "com.evo.level"})
 public class TruckerApp extends JFrame {
 
 	private TruckerMainComponent mainComponent;
-	private static int APP_WIDTH = 910;
-	private static int APP_HEIGHT = 900;
+
+	private AppSetting appSetting;
+
 	private static String APP_TITLE = "Trucker";
 
-	public TruckerApp() {
+	@Autowired
+	public TruckerApp(AppSetting appSetting, TruckerMainComponent mainComponent) {
+		this.appSetting = appSetting;
+		this.mainComponent = mainComponent;
 
 		initUI();
 	}
 
 	private void initUI() {
 
-		mainComponent = new TruckerMainComponent();
+		mainComponent.renderComponent();
 
 		createLayout(mainComponent);
 
 		setTitle(APP_TITLE);
-		setSize(APP_WIDTH, APP_HEIGHT);
+		setSize(appSetting.getAppWidth(), appSetting.getAppHeight());
 		setLocationRelativeTo(null);
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 	}

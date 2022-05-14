@@ -52,9 +52,9 @@ public class SeamlessBackgroundPanel extends ImagePanel implements ActionListene
     }
 
     public void moveForward(){
-        xPos -= 200;
+        xPos -= 200; //FIXME: This should be frame size and not a hard coded number
 
-        if(xPos < -1000){
+        if(xPos < -1000){ //FIXME: 1000 here must be the actual width of the window. we should not allow full screen
             xPos = 0;
         }
         repaint();
