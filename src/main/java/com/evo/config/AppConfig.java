@@ -1,5 +1,9 @@
 package com.evo.config;
 
+import com.evo.engine.DefaultGearBox;
+import com.evo.engine.DefaultTruckEngine;
+import com.evo.engine.GearBox;
+import com.evo.engine.TruckEngine;
 import com.evo.level.GameLevel;
 import com.evo.level.GameLevelOne;
 import org.springframework.context.annotation.Bean;
@@ -21,6 +25,16 @@ public class AppConfig {
     @Bean
     public GameLevel gameLevelOne(){
         return new GameLevelOne();
+    }
+
+    @Bean
+    public TruckEngine truckEngine(){
+        return new DefaultTruckEngine();
+    }
+
+    @Bean
+    public GearBox gearBox(){
+        return new DefaultGearBox();
     }
 
 }

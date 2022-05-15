@@ -1,7 +1,7 @@
 package com.evo.modal;
 
 public class MovingPanel extends ImagePanel{
-    private boolean moving;
+    protected boolean moving;
 
     //number of pixels MovingPanel moves in both x and y values
     //per animationDelay milliseconds
@@ -25,11 +25,11 @@ public class MovingPanel extends ImagePanel{
         }
     }
 
-    private boolean isMoving() {
+    protected boolean isMoving() {
         return moving;
     }
 
-    public void setMoving(boolean moving) {
+    protected void setMoving(boolean moving) {
         this.moving = moving;
     }
 

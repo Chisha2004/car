@@ -10,6 +10,9 @@ import com.evo.modal.Truck;
 
 import javax.annotation.Resource;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 
 
 public class GameLevelOne extends GameLevel {
@@ -30,7 +33,17 @@ public class GameLevelOne extends GameLevel {
         truck = new Truck(2);
 //        personPanel = new Person(2);
         moveAllCharactersToStartPosition();
+        truck.setFocusable(true);
+
+        backgroundPanel.addKeyListener(truck);
+        backgroundPanel.setFocusable(true);
+
         backgroundPanel.add(truck);
+    }
+
+    @Override
+    public GameLevelNumber getGameLevelNumber() {
+        return gameLevelNumber;
     }
 
     public void moveAllCharactersToStartPosition(){
@@ -49,10 +62,5 @@ public class GameLevelOne extends GameLevel {
     public Component render() {
 //        personPanel.startAnimation();
         return backgroundPanel;
-    }
-
-    @Override
-    public GameLevelNumber getGameLevelNumber() {
-        return gameLevelNumber;
     }
 }
