@@ -1,11 +1,12 @@
 package com.evo.config;
 
 import com.evo.engine.DefaultGearBox;
-import com.evo.engine.DefaultTruckEngine;
+import com.evo.engine.DefaultVehicleEngine;
 import com.evo.engine.GearBox;
-import com.evo.engine.TruckEngine;
+import com.evo.engine.VehicleEngine;
 import com.evo.level.GameLevel;
 import com.evo.level.GameLevelOne;
+import com.evo.modal.Vehicle;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -28,13 +29,18 @@ public class AppConfig {
     }
 
     @Bean
-    public TruckEngine truckEngine(){
-        return new DefaultTruckEngine();
+    public VehicleEngine vehicleEngine(){
+        return new DefaultVehicleEngine();
     }
 
     @Bean
     public GearBox gearBox(){
         return new DefaultGearBox();
+    }
+
+    @Bean
+    public Vehicle getVehicle(){
+        return new Vehicle(1);
     }
 
 }

@@ -2,24 +2,28 @@ package com.evo.level;
 
 import com.evo.config.AppSetting;
 import com.evo.config.GameLevelNumber;
+import com.evo.engine.DefaultVehicleEngine;
 import com.evo.modal.ImagePanel;
 import com.evo.modal.Person;
 import com.evo.modal.SeamlessBackgroundPanel;
-import com.evo.modal.Truck;
+import com.evo.modal.Vehicle;
 
 
 import javax.annotation.Resource;
+import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
+import java.util.Timer;
+import java.util.TimerTask;
 
 
 public class GameLevelOne extends GameLevel {
 
     private ImagePanel backgroundPanel;
-    private Person personPanel;
-    private Truck truck;
+    CustomLabel speedLabel;
+    private static int GENERIC_TIMER_INTERVAL = 2; //MILLI
+
+    @Resource
+    private Vehicle vehicle;
 
     @Resource
     private AppSetting appSetting;
@@ -30,15 +34,31 @@ public class GameLevelOne extends GameLevel {
     }
 
     public void addDefaultCharactersToScene() {
-        truck = new Truck(2);
+        vehicle.setUpVehicle();
 //        personPanel = new Person(2);
         moveAllCharactersToStartPosition();
-        truck.setFocusable(true);
+        vehicle.setFocusable(true);
 
-        backgroundPanel.addKeyListener(truck);
+        backgroundPanel.addKeyListener(vehicle);
         backgroundPanel.setFocusable(true);
 
-        backgroundPanel.add(truck);
+        backgroundPanel.add(vehicle);
+        JPanel testPanel = new JPanel( new BorderLayout());
+        //FIXME: For now just add a label for speed
+
+        speedLabel = new CustomLabel("Current Speed: " + 0);
+        backgroundPanel.add(speedLabel);
+
+        initGenericTimer();
+    }
+
+    protected void initGenericTimer(){
+        genericTimer = new Timer();
+        genericTimer.scheduleAtFixedRate( new GameLevelOne.GenericTimerTask(),0, GENERIC_TIMER_INTERVAL);
+    }
+
+    private void updateCurrentSpeedOnScreen(){
+        speedLabel.setText(String.format("Current Speed : [%s kms]",vehicle.getCurrentSpeed()));
     }
 
     @Override
@@ -48,7 +68,7 @@ public class GameLevelOne extends GameLevel {
 
     public void moveAllCharactersToStartPosition(){
 
-        truck.setLocation(0, getTruckStartingYPosition());
+        vehicle.setLocation(0, getTruckStartingYPosition());
 
     }
 
@@ -62,5 +82,13 @@ public class GameLevelOne extends GameLevel {
     public Component render() {
 //        personPanel.startAnimation();
         return backgroundPanel;
+    }
+
+    protected class GenericTimerTask extends TimerTask {
+
+        @Override
+        public void run() {
+            updateCurrentSpeedOnScreen();
+        }
     }
 }

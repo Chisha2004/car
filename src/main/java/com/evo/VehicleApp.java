@@ -13,17 +13,17 @@ import java.awt.*;
 
 
 @SpringBootApplication
-@ComponentScan({"com.evo.config","com.evo.core", "com.evo.level"})
-public class TruckerApp extends JFrame {
+@ComponentScan({"com.evo.config","com.evo.core", "com.evo.level", "com.evo.engine"})
+public class VehicleApp extends JFrame {
 
 	private TruckerMainComponent mainComponent;
 
 	private AppSetting appSetting;
 
-	private static String APP_TITLE = "Trucker";
+	private static String APP_TITLE = "Vehicle";
 
 	@Autowired
-	public TruckerApp(AppSetting appSetting, TruckerMainComponent mainComponent) {
+	public VehicleApp(AppSetting appSetting, TruckerMainComponent mainComponent) {
 		this.appSetting = appSetting;
 		this.mainComponent = mainComponent;
 
@@ -61,12 +61,12 @@ public class TruckerApp extends JFrame {
 
 	public static void main(String[] args) {
 
-		ConfigurableApplicationContext ctx = new SpringApplicationBuilder(TruckerApp.class)
+		ConfigurableApplicationContext ctx = new SpringApplicationBuilder(VehicleApp.class)
 				.headless(false).run(args);
 
 		EventQueue.invokeLater(() -> {
 
-			TruckerApp ex = ctx.getBean(TruckerApp.class);
+			VehicleApp ex = ctx.getBean(VehicleApp.class);
 			ex.setVisible(true);
 		});
 	}

@@ -70,4 +70,21 @@ public abstract class GearBox {
     public int getCurrentSpeed() {
         return currentSpeed;
     }
+
+    public void decelerate() {
+
+        if(currentSpeed > 0){
+            currentSpeed -= getCurrentSpeedIncremental();
+        }
+
+        if(currentSpeed < 0){
+            currentSpeed = 0;
+        }
+    }
+
+    public void stop() {
+        currentSpeed = 0;
+        currentGearNumber = GearNumber.NEUTRAL;
+        currentGearNumberIndex = 0;
+    }
 }
