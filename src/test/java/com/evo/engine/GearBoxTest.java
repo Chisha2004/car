@@ -74,6 +74,25 @@ public class GearBoxTest {
 
     }
 
+    @Test
+    public void testDecelerate(){
+        gearBox.shiftUp();
+        //accelerate 10 times should see us reach the max speed of a given gear
+        for(int i=0; i < 10; i++){
+            gearBox.accelerate();
+        }
+
+        Assert.isTrue(gearBox.getCurrentSpeed() > 0, "Current speed should be greater than 0");
+
+        //now decelerate many more times and make sure we are not going below 0
+        for(int i=0; i < 20; i++){
+            gearBox.decelerate();
+        }
+
+        Assert.isTrue(gearBox.getCurrentSpeed() == 0, "Current speed should be equal to 0");
+
+    }
+
     private void assertGearSpeedBellowOrEqualToMaxSpeed(){
 
         if(gearBox.getCurrentGear().equals(GearNumber.ONE)){

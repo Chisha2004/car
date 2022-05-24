@@ -7,6 +7,7 @@ import com.evo.modal.ImagePanel;
 import com.evo.modal.Person;
 import com.evo.modal.SeamlessBackgroundPanel;
 import com.evo.modal.Vehicle;
+import com.evo.util.BackgroundSpeedCalculator;
 
 
 import javax.annotation.Resource;
@@ -18,7 +19,7 @@ import java.util.TimerTask;
 
 public class GameLevelOne extends GameLevel {
 
-    private ImagePanel backgroundPanel;
+    private SeamlessBackgroundPanel backgroundPanel;
     CustomLabel speedLabel;
     private static int GENERIC_TIMER_INTERVAL = 2; //MILLI
 
@@ -61,6 +62,16 @@ public class GameLevelOne extends GameLevel {
         speedLabel.setText(String.format("Current Speed : [%s kms]",vehicle.getCurrentSpeed()));
     }
 
+    private void updateBackgroundPosition(){
+        if(vehicle.getCurrentSpeed() > 0){
+            backgroundPanel.startAnimationIfNotStarted();
+            backgroundPanel.updateTimerDelay(
+                    BackgroundSpeedCalculator.calculateSpeedIntervalMillis(vehicle.getCurrentSpeed()));
+        }else{
+            backgroundPanel.stop();
+        }
+    }
+
     @Override
     public GameLevelNumber getGameLevelNumber() {
         return gameLevelNumber;
@@ -89,6 +100,7 @@ public class GameLevelOne extends GameLevel {
         @Override
         public void run() {
             updateCurrentSpeedOnScreen();
+            updateBackgroundPosition();
         }
     }
 }
