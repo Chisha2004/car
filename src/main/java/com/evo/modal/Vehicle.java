@@ -1,6 +1,7 @@
 package com.evo.modal;
 
 import com.evo.engine.GearBox;
+import com.evo.engine.GearNumber;
 import com.evo.engine.VehicleEngine;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -38,9 +39,14 @@ public class Vehicle extends AnimatedPanel implements KeyListener {
         vehicleEngine.setGearBox(gearBox);
     }
 
-    private void accelerate(){
+    private void pressAccelerator(){
        //accelerate has to keep being called continuously
-        vehicleEngine.accelerate();
+        vehicleEngine.pressAccelerator();
+    }
+
+    private void releaseAccelerator(){
+        //accelerate has to keep being called continuously
+        vehicleEngine.releaseAccelerator();
     }
 
     @Override
@@ -51,12 +57,10 @@ public class Vehicle extends AnimatedPanel implements KeyListener {
         }else if(e.getKeyChar() == 'w'){
 
             vehicleEngine.shiftGearUp();
-            log.info(String.format("Gear shifted up: Gear number: [%s]", vehicleEngine.getCurrentGearNumber()));
 
         }else if(e.getKeyChar() == 's'){
 
             vehicleEngine.shiftGearDown();
-            log.info(String.format("Gear shifted down: Gear number: [%s]", vehicleEngine.getCurrentGearNumber()));
 
         }
     }
@@ -64,18 +68,26 @@ public class Vehicle extends AnimatedPanel implements KeyListener {
     @Override
     public void keyPressed(KeyEvent e) {
         if(e.getKeyCode() == KeyEvent.VK_RIGHT){
-            accelerate();
-            log.info(String.format("Accelerating, Current speed: [%s]", vehicleEngine.getCurrentSpeed()));
+            pressAccelerator();
         }
     }
 
     @Override
     public void keyReleased(KeyEvent e) {
-        //TODO: need to decelerate slowly if the accelerate key is lifted
-        // deceleration is happening by itself automatically
+        if(e.getKeyCode() == KeyEvent.VK_RIGHT){
+            vehicleEngine.releaseAccelerator();
+        }
     }
 
     public int getCurrentSpeed() {
         return vehicleEngine.getCurrentSpeed();
+    }
+
+    public GearNumber getCurrentGearNumber() {
+        return vehicleEngine.getCurrentGearNumber();
+    }
+
+    public boolean isEngineRunning() {
+        return vehicleEngine.isEngineRunning();
     }
 }

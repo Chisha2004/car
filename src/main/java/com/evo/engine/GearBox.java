@@ -14,16 +14,12 @@ public abstract class GearBox {
     private int currentGearNumberIndex = 0; //default should be neutral
     private int currentSpeed = 0;
 
-    public int getCurrentSpeedIncremental(){
-        return gearSpeedIncremental.get(currentGearNumber);
-    }
-
     /**
      * Order off adding
      * */
-    protected void addGear(GearNumber gearNumber, int gearIncremental, int gearMaxSpeed) {
+    protected void addGear(GearNumber gearNumber, int speedTimerDelay, int gearMaxSpeed) {
 
-        gearSpeedIncremental.put(gearNumber, gearIncremental);
+        gearSpeedIncremental.put(gearNumber, speedTimerDelay);
         maxGearSpeed.put(gearNumber, gearMaxSpeed);
         gearNumberNames.add(gearNumber);
     }
@@ -59,7 +55,7 @@ public abstract class GearBox {
 
     public void accelerate() {
         if(currentSpeed < getGetCurrentGearMaxSpeed()){
-            currentSpeed += getCurrentSpeedIncremental();
+            currentSpeed += 1;
         }
 
         if(currentSpeed > getGetCurrentGearMaxSpeed()){
@@ -74,7 +70,7 @@ public abstract class GearBox {
     public void decelerate() {
 
         if(currentSpeed > 0){
-            currentSpeed -= getCurrentSpeedIncremental();
+            currentSpeed -= 1;
         }
 
         if(currentSpeed < 0){
@@ -86,5 +82,9 @@ public abstract class GearBox {
         currentSpeed = 0;
         currentGearNumber = GearNumber.NEUTRAL;
         currentGearNumberIndex = 0;
+    }
+
+    public int getCurrentSpeedTimerDelay(){
+        return gearSpeedIncremental.get(currentGearNumber);
     }
 }

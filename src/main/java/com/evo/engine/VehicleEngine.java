@@ -1,9 +1,10 @@
 package com.evo.engine;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
+import javax.swing.Timer;
 
 public abstract class VehicleEngine {
 
@@ -11,9 +12,13 @@ public abstract class VehicleEngine {
     protected Timer decelerateTimer;
     protected GearBox gearBox;
     protected boolean engineRunning = false; // state of the engine
-    protected int throttleSpeedIncrementalTimeInterval = 100; // milliseconds
+    //FIXME: when a car is in lower gears the incremental speed should be slower.
+    // We may need to introduce the property at gear level which indicates the speed of timer based on the gear.
+    // Doing that as well
+    protected int throttleSpeedIncrementalTimeInterval = 500; // milliseconds
     protected int throttleSpeedDecrementalTimeInterval = 200; // milliseconds default maybe twice as much as the
     protected List<Integer> raves; //holds each acceleration or in this context rave to add
+    private boolean acceleratorPressed = false;
 
     public void startEngine(){
 
@@ -23,12 +28,11 @@ public abstract class VehicleEngine {
 
         raves = new ArrayList<>();
 
-        accelerateTimer = new Timer();
-        decelerateTimer = new Timer();
+        accelerateTimer = new Timer(throttleSpeedIncrementalTimeInterval, new AccelerateTimerListener() );
+        decelerateTimer = new Timer(throttleSpeedDecrementalTimeInterval, new DecelerateTimerListener());
 
-        accelerateTimer.scheduleAtFixedRate( new DefaultVehicleEngine.AccelerateTimerTask(),0, throttleSpeedIncrementalTimeInterval);
-        decelerateTimer.scheduleAtFixedRate( new DefaultVehicleEngine.DecelerateTimerTask(), 0,throttleSpeedDecrementalTimeInterval);
-
+        accelerateTimer.start();
+        decelerateTimer.start();
         engineRunning = true;
     }
 
@@ -37,10 +41,10 @@ public abstract class VehicleEngine {
         gearBox.stop();
 
         if(accelerateTimer != null){
-            accelerateTimer.cancel();
+            accelerateTimer.stop();
         }
         if(decelerateTimer != null){
-            decelerateTimer.cancel();
+            decelerateTimer.stop();
         }
 
         raves.clear();
@@ -54,23 +58,28 @@ public abstract class VehicleEngine {
 
     public void shiftGearUp(){
         gearBox.shiftUp();
+        accelerateTimer.setDelay(gearBox.getCurrentSpeedTimerDelay());
     }
 
     public void setGearBox(GearBox gearBox){
         this.gearBox = gearBox;
     }
 
-    protected void addAccelerationEvent(){
-        //We do need that many events to prove that acceleration is still going on 10 should be sufficient
+    protected void addRaveCount(){
+        //We do not need that many events to prove that acceleration is still going on 10 should be sufficient
         if(raves.size() < 10) {
             raves.add(1);
         }
     }
 
-    public void accelerate(){
-       if(isEngineRunning()){
-           addAccelerationEvent();
-       }
+    public void pressAccelerator(){
+        if(isEngineRunning()) {
+            acceleratorPressed = true;
+        }
+    }
+
+    public void releaseAccelerator(){
+        acceleratorPressed = false;
     }
 
     public void shiftGearDown() {
@@ -85,10 +94,13 @@ public abstract class VehicleEngine {
         return gearBox.getCurrentSpeed();
     }
 
-    protected class AccelerateTimerTask extends TimerTask {
-
+    protected class AccelerateTimerListener implements ActionListener {
         @Override
-        public void run() {
+        public void actionPerformed(ActionEvent e) {
+            if(acceleratorPressed){
+                addRaveCount();
+            }
+
             if(!raves.isEmpty()){
 
                 gearBox.accelerate();
@@ -98,10 +110,14 @@ public abstract class VehicleEngine {
         }
     }
 
-    protected class DecelerateTimerTask extends TimerTask {
+    protected class DecelerateTimerListener implements ActionListener {
 
         @Override
-        public void run() {
+        public void actionPerformed(ActionEvent e) {
+            if(acceleratorPressed){
+                return;
+            }
+
             if(raves.isEmpty() && gearBox.getCurrentSpeed() > 0){
                 gearBox.decelerate();
             }

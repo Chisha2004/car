@@ -2,16 +2,12 @@ package com.evo.level;
 
 import com.evo.config.AppSetting;
 import com.evo.config.GameLevelNumber;
-import com.evo.engine.DefaultVehicleEngine;
-import com.evo.modal.ImagePanel;
-import com.evo.modal.Person;
 import com.evo.modal.SeamlessBackgroundPanel;
 import com.evo.modal.Vehicle;
 import com.evo.util.BackgroundSpeedCalculator;
 
 
 import javax.annotation.Resource;
-import javax.swing.*;
 import java.awt.*;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -20,7 +16,7 @@ import java.util.TimerTask;
 public class GameLevelOne extends GameLevel {
 
     private SeamlessBackgroundPanel backgroundPanel;
-    CustomLabel speedLabel;
+    VehicleInfoPanel vehicleInfoPanel;
     private static int GENERIC_TIMER_INTERVAL = 2; //MILLI
 
     @Resource
@@ -36,7 +32,6 @@ public class GameLevelOne extends GameLevel {
 
     public void addDefaultCharactersToScene() {
         vehicle.setUpVehicle();
-//        personPanel = new Person(2);
         moveAllCharactersToStartPosition();
         vehicle.setFocusable(true);
 
@@ -44,11 +39,10 @@ public class GameLevelOne extends GameLevel {
         backgroundPanel.setFocusable(true);
 
         backgroundPanel.add(vehicle);
-        JPanel testPanel = new JPanel( new BorderLayout());
         //FIXME: For now just add a label for speed
 
-        speedLabel = new CustomLabel("Current Speed: " + 0);
-        backgroundPanel.add(speedLabel);
+        vehicleInfoPanel = new VehicleInfoPanel();
+        backgroundPanel.add(vehicleInfoPanel);
 
         initGenericTimer();
     }
@@ -59,7 +53,9 @@ public class GameLevelOne extends GameLevel {
     }
 
     private void updateCurrentSpeedOnScreen(){
-        speedLabel.setText(String.format("Current Speed : [%s kms]",vehicle.getCurrentSpeed()));
+        vehicleInfoPanel.setSpeedAndGearText(String.format("Current Speed : [%s kms]",vehicle.getCurrentSpeed()),
+                String.format("Current Gear : [%s]",vehicle.getCurrentGearNumber()),
+                String.format("Engine Status : [%s]",vehicle.isEngineRunning()? "on" : "off"));
     }
 
     private void updateBackgroundPosition(){
