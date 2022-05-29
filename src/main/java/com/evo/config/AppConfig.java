@@ -4,9 +4,12 @@ import com.evo.engine.DefaultGearBox;
 import com.evo.engine.DefaultVehicleEngine;
 import com.evo.engine.GearBox;
 import com.evo.engine.VehicleEngine;
+import com.evo.entity.SimpleCloud;
 import com.evo.level.GameLevel;
 import com.evo.level.GameLevelOne;
-import com.evo.modal.Vehicle;
+import com.evo.entity.SimpleFlatGround;
+import com.evo.entity.Vehicle;
+import org.springframework.beans.factory.annotation.Lookup;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -25,6 +28,7 @@ public class AppConfig {
 
     @Bean
     public GameLevel gameLevelOne(){
+
         return new GameLevelOne();
     }
 
@@ -40,7 +44,17 @@ public class AppConfig {
 
     @Bean
     public Vehicle getVehicle(){
-        return new Vehicle(1);
+        return new Vehicle();
+    }
+
+    @Bean
+    public SimpleFlatGround getSimpleFlatGround(){
+        return new SimpleFlatGround();
+    }
+
+    @Bean
+    public SimpleCloud getSimpleCloud(){
+        return new SimpleCloud();
     }
 
 }

@@ -7,6 +7,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+@Deprecated
 public class SeamlessBackgroundPanel extends ImagePanel implements ActionListener {
 
     private Image scaled;

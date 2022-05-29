@@ -1,5 +1,6 @@
 package com.evo.level;
 
+import com.evo.config.GameLevelManager;
 import com.evo.config.GameLevelNumber;
 import org.junit.jupiter.api.Test;
 import org.springframework.util.Assert;

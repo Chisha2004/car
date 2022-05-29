@@ -1,0 +1,7 @@
+An entity is something that can fill up 1 or many tiles based on its width x height
+ENTITY_NAME=NumberOfTilesxWise x NumberOfTilesHeightWise eg. NONE=1x1 will result in no entity being placed here on a single slot,
+NONE=2x1 means NONE(empty) tile being placed on the next 2 tiles or NONE=2x2 means place entity on 2 tiles via the x axis and 2 tiles via the y axis
+
+When using a more than one title in a place the next, if that tile covers the lower corresponding tiles like in a 4x4 we need to leave those tiles with an empty
+in the line where we would have added one since it is already occupied by the above 4x4. Validation will be done to ignore any pixel entity injection where
+already filled by another entity

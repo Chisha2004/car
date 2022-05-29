@@ -8,12 +8,12 @@ import javax.annotation.Resource;
 import javax.swing.*;
 
 @Component
-public class TruckerMainComponent extends JComponent {
+public class GameMainComponent extends JComponent {
 
     @Resource
     GameLevelManager gameLevelManager;
 
-    public TruckerMainComponent(){
+    public GameMainComponent(){
 //        JButton quitButton = new JButton("Quit in side");
 //
 //        quitButton.addActionListener((

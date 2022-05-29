@@ -1,55 +1,86 @@
 package com.evo.level;
 
-import com.evo.config.AppSetting;
+import com.evo.config.GameSetting;
 import com.evo.config.GameLevelNumber;
-import com.evo.modal.SeamlessBackgroundPanel;
-import com.evo.modal.Vehicle;
-import com.evo.util.BackgroundSpeedCalculator;
+import com.evo.entity.EntityManager;
+import com.evo.entity.SimpleFlatGround;
+import com.evo.modal.GamePanel;
+import com.evo.entity.Vehicle;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 
 import javax.annotation.Resource;
 import java.awt.*;
-import java.util.Timer;
-import java.util.TimerTask;
+import java.io.File;
 
 
-public class GameLevelOne extends GameLevel {
+public class GameLevelOne extends GameLevel implements Runnable {
 
-    private SeamlessBackgroundPanel backgroundPanel;
     VehicleInfoPanel vehicleInfoPanel;
-    private static int GENERIC_TIMER_INTERVAL = 2; //MILLI
+    private static int WORLD_MAP_SIZE_X = 20; //Must correspond to map txt file
+    private static int WORLD_MAP_SIZE_Y = 20; //Must correspond to map txt file
+    private static String MAP_DIR = "map";
+    private static String WORLD_MAP_FILE_NAME = MAP_DIR + File.separator + "test-map.txt";
+
+    private Log log = LogFactory.getLog(GameLevelOne.class);
 
     @Resource
     private Vehicle vehicle;
 
     @Resource
-    private AppSetting appSetting;
+    private SimpleFlatGround simpleFlatGround;
+
+    @Resource
+    private GameSetting gameSetting;
+
+    @Resource
+    private EntityManager entityManager;
 
     public GameLevelOne(){
         gameLevelNumber = GameLevelNumber.ONE;
-        backgroundPanel = new SeamlessBackgroundPanel(1, "/img/seamless/background-1.jpg");
+        gamePanel = new GamePanel();
     }
 
+    @Override
     public void addDefaultCharactersToScene() {
+
+        gamePanel.setPreferredSize(gameSetting.getDimension());
+        gamePanel.setBackground(Color.decode(defaultBackgroundHex));
+        gamePanel.setDoubleBuffered(true);
+        gamePanel.setGameSetting(gameSetting);
+
+        setWorldMapFileName(WORLD_MAP_FILE_NAME);
+        setPixelMapSize(WORLD_MAP_SIZE_X, WORLD_MAP_SIZE_Y);
+        readAndGenerateWorldMap(entityManager, gameSetting); //FIXME: maybe make this call accept all three params above
+
+
+
         vehicle.setUpVehicle();
         moveAllCharactersToStartPosition();
-        vehicle.setFocusable(true);
+        //vehicle.setFocusable(true);
 
-        backgroundPanel.addKeyListener(vehicle);
-        backgroundPanel.setFocusable(true);
+        gamePanel.addKeyListener(vehicle);
+        gamePanel.setFocusable(true);
 
-        backgroundPanel.add(vehicle);
+        vehicle.setDefaultLocation(0, simpleFlatGround.getPreferredYPos());
+        gamePanel.addDrawableEntity(vehicle);
+
+
         //FIXME: For now just add a label for speed
 
-        vehicleInfoPanel = new VehicleInfoPanel();
-        backgroundPanel.add(vehicleInfoPanel);
+//        vehicleInfoPanel = new VehicleInfoPanel();
+//        gamePanel.add(vehicleInfoPanel);
 
-        initGenericTimer();
+        initGameThread();
     }
 
-    protected void initGenericTimer(){
-        genericTimer = new Timer();
-        genericTimer.scheduleAtFixedRate( new GameLevelOne.GenericTimerTask(),0, GENERIC_TIMER_INTERVAL);
+    @Override
+    protected void initGameThread(){
+        gameThread = new Thread(this);
+        setGameActive(true);
+        gameThread.start();
+
     }
 
     private void updateCurrentSpeedOnScreen(){
@@ -60,11 +91,11 @@ public class GameLevelOne extends GameLevel {
 
     private void updateBackgroundPosition(){
         if(vehicle.getCurrentSpeed() > 0){
-            backgroundPanel.startAnimationIfNotStarted();
-            backgroundPanel.updateTimerDelay(
-                    BackgroundSpeedCalculator.calculateSpeedIntervalMillis(vehicle.getCurrentSpeed()));
+//            backgroundPanel.startAnimationIfNotStarted();
+//            backgroundPanel.updateTimerDelay(
+//                    BackgroundSpeedCalculator.calculateSpeedIntervalMillis(vehicle.getCurrentSpeed()));
         }else{
-            backgroundPanel.stop();
+//            backgroundPanel.stop();
         }
     }
 
@@ -75,28 +106,52 @@ public class GameLevelOne extends GameLevel {
 
     public void moveAllCharactersToStartPosition(){
 
-        vehicle.setLocation(0, getTruckStartingYPosition());
+        vehicle.setLocation(0, 0);
 
     }
 
     private int getTruckStartingYPosition(){
-        int yLocation = appSetting.getAppHeight() - appSetting.getAppGroundHeight();
+//        int yLocation = gameSetting.getAppHeight() - gameSetting.getAppGroundHeight();
 
-        return yLocation;
+        return 100; //FIXME: need to use map to get correct starting pos
+    }
+
+    protected void updateContent(){
+
     }
 
     @Override
     public Component render() {
 //        personPanel.startAnimation();
-        return backgroundPanel;
+        return gamePanel;
     }
 
-    protected class GenericTimerTask extends TimerTask {
+    @Override
+    public void run() {
 
-        @Override
-        public void run() {
-            updateCurrentSpeedOnScreen();
-            updateBackgroundPosition();
+        double drawIntervalPerSecond = 1000000000/gameSetting.getFPS(); //0.01666 seconds
+        double nextNanoDrawTime = System.nanoTime() + drawIntervalPerSecond;
+
+        while (isGameActive()){
+            updateContent();
+
+            gamePanel.repaint();
+
+            try {
+
+                double remainingNanoTimeToNextDraw = nextNanoDrawTime - System.nanoTime();
+                double remainingMilliTimeToNextDraw = remainingNanoTimeToNextDraw/ 100000;
+
+                if(remainingMilliTimeToNextDraw < 0){
+                    remainingMilliTimeToNextDraw = 0;
+                }
+
+                Thread.sleep((long) remainingMilliTimeToNextDraw);
+                nextNanoDrawTime += drawIntervalPerSecond;
+
+            } catch (InterruptedException e) {
+                log.error(e.getMessage());
+            }
         }
     }
 }

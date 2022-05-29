@@ -4,12 +4,15 @@ import com.evo.level.GameLevel;
 import org.springframework.beans.factory.annotation.Autowired;
 
 
+import java.awt.*;
 import java.util.Map;
 
 public class GameLevelManager {
 
     private int currentLevelNumber = -1;
     private static final int TOTAL_NUMBER_LEVELS = 1;
+
+    private Dimension gameDimension;
 
     @Autowired
     private Map<String, GameLevel> gameLevels;
@@ -24,7 +27,7 @@ public class GameLevelManager {
 
 
     public GameLevel getCurrentLevel(){
-        return gameLevels.get(currentLevelNumber);
+        return gameLevels.get(gameLevelNumbers[currentLevelNumber].value);
     }
 
     public GameLevel goToNextLevel(){
@@ -36,5 +39,9 @@ public class GameLevelManager {
     public GameLevel getStartLevel() {
         currentLevelNumber = 0;
         return gameLevels.get(gameLevelNumbers[currentLevelNumber].value);
+    }
+
+    public Dimension getGameDimension() {
+        return gameDimension;
     }
 }
