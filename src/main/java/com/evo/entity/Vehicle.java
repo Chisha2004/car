@@ -7,7 +7,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import javax.annotation.Resource;
-import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.io.File;
@@ -19,7 +18,6 @@ public class Vehicle extends BufferedImageEntity implements KeyListener {
     private static final String TRUCK_IMG_DIR = "img" + File.separator + "truck";
     private static String STILL_TRUCK_IMAGE_SRC = TRUCK_IMG_DIR + File.separator + "car-test-200x113.png";
     private Log log = LogFactory.getLog(Vehicle.class);
-    private int drawXPos = 0;
 
     @Resource
     private VehicleEngine vehicleEngine;
@@ -98,16 +96,6 @@ public class Vehicle extends BufferedImageEntity implements KeyListener {
     public void setLocation(int xPos, int yPos) {
         this.xPos = xPos;
         this.yPos = yPos;
-        drawXPos = xPos;
-    }
-
-    public void draw(Graphics2D graphics2D){
-        log.info(String.format("Drawing entity [%s] at: xPos: [%s]",getUniqueMapIdentifier() ,xPos));
-
-        if(bufferedImage != null){
-            graphics2D.drawImage(bufferedImage, drawXPos - getWidthFactor(), yPos,
-                    gameSetting.getTileSize() * getWidthFactor(), gameSetting.getTileSize() * getHeightFactor(), null);
-        }
     }
 
     public void setDefaultLocation(int xPos, int groundStartPos){
@@ -133,7 +121,16 @@ public class Vehicle extends BufferedImageEntity implements KeyListener {
         return UNIQUE_MAP_IDENTIFIER_KEY;
     }
 
-    public void setDrawXPos(int drawXPos) {
-        this.drawXPos = drawXPos;
+    @Override
+    public void update() {
+        vehicleEngine.updateSpeed();
+        setLocation(getNextXPosBySpeed(), yPos);
     }
+
+    private int getNextXPosBySpeed(){
+        //FIXME: we need a better way to calculate the vehicle speed ratio
+        double speedFactor = Double.valueOf(getCurrentSpeed()) / 100;
+        return (int) Math.ceil(Double.valueOf(getCurrentXPos()) + speedFactor);
+    }
+
 }

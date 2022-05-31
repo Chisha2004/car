@@ -17,7 +17,8 @@ public abstract class VehicleEngine {
     // Doing that as well
     protected int throttleSpeedIncrementalTimeInterval = 500; // milliseconds
     protected int throttleSpeedDecrementalTimeInterval = 200; // milliseconds default maybe twice as much as the
-    protected List<Integer> raves; //holds each acceleration or in this context rave to add
+    protected List<Integer> raves = new ArrayList<>(); //holds each acceleration or in this context rave to add
+    protected int previousRaveCount = 0;
     private boolean acceleratorPressed = false;
 
     public void startEngine(){
@@ -28,11 +29,11 @@ public abstract class VehicleEngine {
 
         raves = new ArrayList<>();
 
-        accelerateTimer = new Timer(throttleSpeedIncrementalTimeInterval, new AccelerateTimerListener() );
-        decelerateTimer = new Timer(throttleSpeedDecrementalTimeInterval, new DecelerateTimerListener());
-
-        accelerateTimer.start();
-        decelerateTimer.start();
+//        accelerateTimer = new Timer(throttleSpeedIncrementalTimeInterval, new AccelerateTimerListener() );
+//        decelerateTimer = new Timer(throttleSpeedDecrementalTimeInterval, new DecelerateTimerListener());
+//
+//        accelerateTimer.start();
+//        decelerateTimer.start();
         engineRunning = true;
     }
 
@@ -40,12 +41,12 @@ public abstract class VehicleEngine {
 
         gearBox.stop();
 
-        if(accelerateTimer != null){
-            accelerateTimer.stop();
-        }
-        if(decelerateTimer != null){
-            decelerateTimer.stop();
-        }
+//        if(accelerateTimer != null){
+//            accelerateTimer.stop();
+//        }
+//        if(decelerateTimer != null){
+//            decelerateTimer.stop();
+//        }
 
         raves.clear();
 
@@ -58,7 +59,7 @@ public abstract class VehicleEngine {
 
     public void shiftGearUp(){
         gearBox.shiftUp();
-        accelerateTimer.setDelay(gearBox.getCurrentSpeedTimerDelay());
+//        accelerateTimer.setDelay(gearBox.getCurrentSpeedTimerDelay());
     }
 
     public void setGearBox(GearBox gearBox){
@@ -97,16 +98,7 @@ public abstract class VehicleEngine {
     protected class AccelerateTimerListener implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
-            if(acceleratorPressed){
-                addRaveCount();
-            }
-
-            if(!raves.isEmpty()){
-
-                gearBox.accelerate();
-                //assuming we have processed we remove from the queue
-                raves.remove(0);
-            }
+            updateSpeed();
         }
     }
 
@@ -122,6 +114,29 @@ public abstract class VehicleEngine {
                 gearBox.decelerate();
             }
         }
+    }
+
+    public void updateSpeed(){
+        if(acceleratorPressed){
+            addRaveCount();
+
+        }else{
+            //decelerate
+            if(!raves.isEmpty()){
+                raves.remove(0);
+            }else{
+                gearBox.decelerate();
+            }
+        }
+
+        if(!raves.isEmpty() && raves.size() > previousRaveCount){
+            gearBox.accelerate();
+            previousRaveCount = raves.size();
+        }else if(!raves.isEmpty() && raves.size() < previousRaveCount){
+            gearBox.decelerate();
+            previousRaveCount = raves.size();
+        }
+
     }
 
 

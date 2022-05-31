@@ -104,7 +104,7 @@ public class GameLevelOne extends GameLevel implements Runnable {
     }
 
     private void updateContent(){
-
+        vehicle.update();
     }
 
     @Override
@@ -129,7 +129,7 @@ public class GameLevelOne extends GameLevel implements Runnable {
 
                 double remainingNanoTimeToNextDraw = nextNanoDrawTime - System.nanoTime();
 
-                double remainingMilliTimeToNextDraw = remainingNanoTimeToNextDraw/ 1000000;
+                double remainingMilliTimeToNextDraw = remainingNanoTimeToNextDraw/1000000;
 
                 if(remainingMilliTimeToNextDraw < 0){
                     remainingMilliTimeToNextDraw = 0;

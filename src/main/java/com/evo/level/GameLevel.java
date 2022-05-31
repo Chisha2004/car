@@ -118,8 +118,6 @@ public abstract class GameLevel extends GamePanel{
 
     protected void paintGameContent(Graphics2D graphics2D){
 
-        vehicle.setLocation(vehicle.getCurrentXPos() + 1, vehicle.getCurrentYPos());
-
         pixelMapOccupiedTracker = new int[totalNumberWorldPixelColY][totalNumberWorldPixelColX];
 
         try{
@@ -127,7 +125,6 @@ public abstract class GameLevel extends GamePanel{
                 generateWorldMapFromRow(worldMapText.get(y), y, graphics2D);
             }
 
-            vehicle.setDrawXPos(cameraStartPosX);
             vehicle.draw(graphics2D);
         }catch (Exception e){
             log.error(String.format("Error while painting game content: %s", e.getMessage()), e);
@@ -204,7 +201,7 @@ public abstract class GameLevel extends GamePanel{
     }
 
     private int getCameraStartXPos() {
-        return vehicle.getCurrentXPos() - vehicle.getWidthFactor();
+        return vehicle.getCurrentXPos() + vehicle.getCurrentSpeed();
     }
 
     private void markPixelDrawPointAsOccupied(int y, int x){
