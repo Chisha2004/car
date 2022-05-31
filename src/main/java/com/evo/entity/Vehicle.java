@@ -7,6 +7,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import javax.annotation.Resource;
+import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.io.File;
@@ -14,10 +15,11 @@ import java.io.File;
 //TODO: This should be an abstract class then extended by other vehicle types
 public class Vehicle extends BufferedImageEntity implements KeyListener {
 
-    public static final String UNIQUE_MAP_IDENTIFIER_KEY = "DEFAULT_CAR";
+    public static String UNIQUE_MAP_IDENTIFIER_KEY = "DEFAULT_CAR";
     private static final String TRUCK_IMG_DIR = "img" + File.separator + "truck";
     private static String STILL_TRUCK_IMAGE_SRC = TRUCK_IMG_DIR + File.separator + "car-test-200x113.png";
     private Log log = LogFactory.getLog(Vehicle.class);
+    private int drawXPos = 0;
 
     @Resource
     private VehicleEngine vehicleEngine;
@@ -69,6 +71,8 @@ public class Vehicle extends BufferedImageEntity implements KeyListener {
     public void keyPressed(KeyEvent e) {
         if(e.getKeyCode() == KeyEvent.VK_RIGHT){
             pressAccelerator();
+        }else if(e.getKeyChar() == 's'){
+
         }
     }
 
@@ -94,12 +98,22 @@ public class Vehicle extends BufferedImageEntity implements KeyListener {
     public void setLocation(int xPos, int yPos) {
         this.xPos = xPos;
         this.yPos = yPos;
+        drawXPos = xPos;
+    }
+
+    public void draw(Graphics2D graphics2D){
+        log.info(String.format("Drawing entity [%s] at: xPos: [%s]",getUniqueMapIdentifier() ,xPos));
+
+        if(bufferedImage != null){
+            graphics2D.drawImage(bufferedImage, drawXPos - getWidthFactor(), yPos,
+                    gameSetting.getTileSize() * getWidthFactor(), gameSetting.getTileSize() * getHeightFactor(), null);
+        }
     }
 
     public void setDefaultLocation(int xPos, int groundStartPos){
         int carImageOffset = 25;//temp fix because of poor images
 
-        super.setDefaultLocation(xPos,
+        super.setLocation(xPos,
                 (groundStartPos - (gameSetting.getTileSize() * getHeightFactor()) + carImageOffset)); // offset by 10
     }
 
@@ -117,5 +131,9 @@ public class Vehicle extends BufferedImageEntity implements KeyListener {
     @Override
     public String getUniqueMapIdentifier(){
         return UNIQUE_MAP_IDENTIFIER_KEY;
+    }
+
+    public void setDrawXPos(int drawXPos) {
+        this.drawXPos = drawXPos;
     }
 }

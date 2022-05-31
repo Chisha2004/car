@@ -18,15 +18,14 @@ import java.io.File;
 public class GameLevelOne extends GameLevel implements Runnable {
 
     VehicleInfoPanel vehicleInfoPanel;
-    private static int WORLD_MAP_SIZE_X = 20; //Must correspond to map txt file
-    private static int WORLD_MAP_SIZE_Y = 20; //Must correspond to map txt file
+    private static int WORLD_MAP_SIZE_X = 100; //Must correspond to map txt file
+    private static int WORLD_MAP_SIZE_Y = 16; //Must correspond to map txt file
     private static String MAP_DIR = "map";
-    private static String WORLD_MAP_FILE_NAME = MAP_DIR + File.separator + "test-map.txt";
 
     private Log log = LogFactory.getLog(GameLevelOne.class);
 
     @Resource
-    private Vehicle vehicle;
+    private Vehicle selectedVehicle;
 
     @Resource
     private SimpleFlatGround simpleFlatGround;
@@ -39,33 +38,27 @@ public class GameLevelOne extends GameLevel implements Runnable {
 
     public GameLevelOne(){
         gameLevelNumber = GameLevelNumber.ONE;
-        gamePanel = new GamePanel();
+        worldMapFileName = MAP_DIR + File.separator + "world-map-level-1_100x16.txt";
     }
 
     @Override
-    public void addDefaultCharactersToScene() {
+    public void init() {
 
-        gamePanel.setPreferredSize(gameSetting.getDimension());
-        gamePanel.setBackground(Color.decode(defaultBackgroundHex));
-        gamePanel.setDoubleBuffered(true);
-        gamePanel.setGameSetting(gameSetting);
-
-        setWorldMapFileName(WORLD_MAP_FILE_NAME);
-        setPixelMapSize(WORLD_MAP_SIZE_X, WORLD_MAP_SIZE_Y);
-        readAndGenerateWorldMap(entityManager, gameSetting); //FIXME: maybe make this call accept all three params above
-
-
+        setPreferredSize(gameSetting.getDimension());
+        setBackground(Color.decode(defaultBackgroundHex));
+        setDoubleBuffered(true);
+        setGameSetting(gameSetting);
+        setPixelMapSize(WORLD_MAP_SIZE_Y, WORLD_MAP_SIZE_X);
+        setEntityManager(entityManager);
+        readAndGenerateWorldMap();
+        vehicle = selectedVehicle;
 
         vehicle.setUpVehicle();
-        moveAllCharactersToStartPosition();
-        //vehicle.setFocusable(true);
 
-        gamePanel.addKeyListener(vehicle);
-        gamePanel.setFocusable(true);
+        addKeyListener(vehicle);
+        setFocusable(true);
 
         vehicle.setDefaultLocation(0, simpleFlatGround.getPreferredYPos());
-        gamePanel.addDrawableEntity(vehicle);
-
 
         //FIXME: For now just add a label for speed
 
@@ -110,43 +103,40 @@ public class GameLevelOne extends GameLevel implements Runnable {
 
     }
 
-    private int getTruckStartingYPosition(){
-//        int yLocation = gameSetting.getAppHeight() - gameSetting.getAppGroundHeight();
-
-        return 100; //FIXME: need to use map to get correct starting pos
-    }
-
-    protected void updateContent(){
+    private void updateContent(){
 
     }
 
     @Override
     public Component render() {
 //        personPanel.startAnimation();
-        return gamePanel;
+        return this;
     }
 
     @Override
     public void run() {
 
-        double drawIntervalPerSecond = 1000000000/gameSetting.getFPS(); //0.01666 seconds
+        long nanoToSeconds = 1000000000; //1000000000 makes 1 second
+        double drawIntervalPerSecond = nanoToSeconds/gameSetting.getFPS(); //0.01666 seconds
         double nextNanoDrawTime = System.nanoTime() + drawIntervalPerSecond;
 
         while (isGameActive()){
             updateContent();
 
-            gamePanel.repaint();
+            repaint();
 
             try {
 
                 double remainingNanoTimeToNextDraw = nextNanoDrawTime - System.nanoTime();
-                double remainingMilliTimeToNextDraw = remainingNanoTimeToNextDraw/ 100000;
+
+                double remainingMilliTimeToNextDraw = remainingNanoTimeToNextDraw/ 1000000;
 
                 if(remainingMilliTimeToNextDraw < 0){
                     remainingMilliTimeToNextDraw = 0;
                 }
 
                 Thread.sleep((long) remainingMilliTimeToNextDraw);
+
                 nextNanoDrawTime += drawIntervalPerSecond;
 
             } catch (InterruptedException e) {
@@ -154,4 +144,5 @@ public class GameLevelOne extends GameLevel implements Runnable {
             }
         }
     }
+
 }

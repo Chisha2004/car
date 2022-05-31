@@ -32,9 +32,9 @@ public abstract class BufferedImageEntity extends DrawableEntity{
         }
 
     }
-
+    @Override
     public void draw(Graphics2D graphics2D){
-
+        log.info(String.format("Drawing entity [%s] at: xPos: [%s]",getUniqueMapIdentifier() ,xPos));
         if(bufferedImage != null){
             graphics2D.drawImage(bufferedImage, xPos, yPos,
                     gameSetting.getTileSize() * getWidthFactor(), gameSetting.getTileSize() * getHeightFactor(), null);

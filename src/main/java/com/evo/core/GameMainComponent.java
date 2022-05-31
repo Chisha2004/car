@@ -32,7 +32,7 @@ public class GameMainComponent extends JComponent {
 
     public void renderComponent(){
         GameLevel gameLevel = gameLevelManager.getStartLevel();
-        gameLevel.addDefaultCharactersToScene();
+        gameLevel.init();
 
         GroupLayout gl = new GroupLayout(this);
         setLayout(gl);

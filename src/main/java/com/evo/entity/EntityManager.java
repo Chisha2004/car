@@ -24,7 +24,7 @@ public class EntityManager {
         BufferedImageEntity entity = null;
 
         if(SimpleCloud.UNIQUE_MAP_IDENTIFIER_KEY.equals(uniqueIdentifier)){
-            return appConfig.getSimpleCloud();
+            return new SimpleCloud(gameSetting);
         }else if(SimpleFlatGround.UNIQUE_MAP_IDENTIFIER_KEY.equals(uniqueIdentifier)){
             return new SimpleFlatGround(gameSetting);
         }else if(Vehicle.UNIQUE_MAP_IDENTIFIER_KEY.equals(uniqueIdentifier)){

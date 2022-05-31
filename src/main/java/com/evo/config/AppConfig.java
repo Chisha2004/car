@@ -9,6 +9,8 @@ import com.evo.level.GameLevel;
 import com.evo.level.GameLevelOne;
 import com.evo.entity.SimpleFlatGround;
 import com.evo.entity.Vehicle;
+import com.evo.modal.GamePanel;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Lookup;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -24,7 +26,6 @@ public class AppConfig {
     public GameLevelManager gameLevelManager(){
         return new GameLevelManager();
     }
-
 
     @Bean
     public GameLevel gameLevelOne(){
@@ -50,11 +51,6 @@ public class AppConfig {
     @Bean
     public SimpleFlatGround getSimpleFlatGround(){
         return new SimpleFlatGround();
-    }
-
-    @Bean
-    public SimpleCloud getSimpleCloud(){
-        return new SimpleCloud();
     }
 
 }
