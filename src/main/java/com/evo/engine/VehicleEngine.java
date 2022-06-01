@@ -29,24 +29,12 @@ public abstract class VehicleEngine {
 
         raves = new ArrayList<>();
 
-//        accelerateTimer = new Timer(throttleSpeedIncrementalTimeInterval, new AccelerateTimerListener() );
-//        decelerateTimer = new Timer(throttleSpeedDecrementalTimeInterval, new DecelerateTimerListener());
-//
-//        accelerateTimer.start();
-//        decelerateTimer.start();
         engineRunning = true;
     }
 
     public void stopEngine() {
 
         gearBox.stop();
-
-//        if(accelerateTimer != null){
-//            accelerateTimer.stop();
-//        }
-//        if(decelerateTimer != null){
-//            decelerateTimer.stop();
-//        }
 
         raves.clear();
 
@@ -59,7 +47,7 @@ public abstract class VehicleEngine {
 
     public void shiftGearUp(){
         gearBox.shiftUp();
-//        accelerateTimer.setDelay(gearBox.getCurrentSpeedTimerDelay());
+        raves.clear();
     }
 
     public void setGearBox(GearBox gearBox){
@@ -95,27 +83,6 @@ public abstract class VehicleEngine {
         return gearBox.getCurrentSpeed();
     }
 
-    protected class AccelerateTimerListener implements ActionListener {
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            updateSpeed();
-        }
-    }
-
-    protected class DecelerateTimerListener implements ActionListener {
-
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            if(acceleratorPressed){
-                return;
-            }
-
-            if(raves.isEmpty() && gearBox.getCurrentSpeed() > 0){
-                gearBox.decelerate();
-            }
-        }
-    }
-
     public void updateSpeed(){
         if(acceleratorPressed){
             addRaveCount();
@@ -129,7 +96,7 @@ public abstract class VehicleEngine {
             }
         }
 
-        if(!raves.isEmpty() && raves.size() > previousRaveCount){
+        if(!raves.isEmpty() && raves.size() >= previousRaveCount){
             gearBox.accelerate();
             previousRaveCount = raves.size();
         }else if(!raves.isEmpty() && raves.size() < previousRaveCount){

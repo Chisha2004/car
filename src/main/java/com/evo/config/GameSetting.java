@@ -24,6 +24,9 @@ public class GameSetting {
     @Value("${app.game.fps}")
     private int FPS;  //frames per second
 
+    @Value("${app.game.actual.default.total.world.x.size}")
+    private int totalWorldXSize;
+
     private Dimension dimension;
 
     public GameSetting(){
@@ -57,5 +60,9 @@ public class GameSetting {
 
     public int getActualScreenYPos(int xTilePos) {
         return getTileSize() * xTilePos;
+    }
+
+    public int getActualWorldXSize(){
+        return totalWorldXSize;
     }
 }

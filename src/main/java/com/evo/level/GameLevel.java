@@ -4,6 +4,7 @@ import com.evo.config.GameLevelNumber;
 import com.evo.config.GameSetting;
 import com.evo.entity.BufferedImageEntity;
 import com.evo.entity.EntityManager;
+import com.evo.entity.InGameInfo;
 import com.evo.entity.Vehicle;
 import com.evo.modal.GamePanel;
 import org.apache.commons.logging.Log;
@@ -37,6 +38,7 @@ public abstract class GameLevel extends GamePanel{
     private int cameraStartPosY = 0; //default
     private int cameraEndPosX = 20; //default
     private int cameraEndPosY = 20; //
+    protected InGameInfo inGameInfo;
 
     protected GameLevelNumber gameLevelNumber = null;
     protected String defaultBackgroundHex = "#99ccff";
@@ -125,7 +127,13 @@ public abstract class GameLevel extends GamePanel{
                 generateWorldMapFromRow(worldMapText.get(y), y, graphics2D);
             }
 
+            vehicle.setCameraStartPosX(cameraStartPosX);
             vehicle.draw(graphics2D);
+
+            if(inGameInfo != null){
+                inGameInfo.setLocation(gameSetting.getScreenWidth()/2, 10);
+                inGameInfo.draw(graphics2D);
+            }
         }catch (Exception e){
             log.error(String.format("Error while painting game content: %s", e.getMessage()), e);
         }

@@ -3,6 +3,7 @@ package com.evo.level;
 import com.evo.config.GameSetting;
 import com.evo.config.GameLevelNumber;
 import com.evo.entity.EntityManager;
+import com.evo.entity.InGameInfo;
 import com.evo.entity.SimpleFlatGround;
 import com.evo.modal.GamePanel;
 import com.evo.entity.Vehicle;
@@ -59,6 +60,8 @@ public class GameLevelOne extends GameLevel implements Runnable {
         setFocusable(true);
 
         vehicle.setDefaultLocation(0, simpleFlatGround.getPreferredYPos());
+
+        inGameInfo = new InGameInfo(vehicle);
 
         //FIXME: For now just add a label for speed
 

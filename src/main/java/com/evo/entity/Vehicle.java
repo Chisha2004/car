@@ -7,6 +7,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import javax.annotation.Resource;
+import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.io.File;
@@ -133,4 +134,15 @@ public class Vehicle extends BufferedImageEntity implements KeyListener {
         return (int) Math.ceil(Double.valueOf(getCurrentXPos()) + speedFactor);
     }
 
+    @Override
+    protected int getCustomXDrawPosOrDefault(){
+
+        int customXPos = xPos;
+
+        if(customXPos > 100){
+            customXPos =  100;
+        }
+
+        return customXPos;
+    }
 }
