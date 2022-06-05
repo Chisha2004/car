@@ -17,7 +17,10 @@ public class Vehicle extends BufferedImageEntity implements KeyListener {
 
     public static String UNIQUE_MAP_IDENTIFIER_KEY = "DEFAULT_CAR";
     private static final String TRUCK_IMG_DIR = "img" + File.separator + "truck";
-    private static String STILL_TRUCK_IMAGE_SRC = TRUCK_IMG_DIR + File.separator + "car-test-200x113.png";
+    private static String STILL_TRUCK_IMAGE_SRC = TRUCK_IMG_DIR + File.separator + "car-400x100.png";
+    private DefaultTyre frontTyre;
+    private DefaultTyre backTyre;
+    private static int tyreHeight = 10;
     private Log log = LogFactory.getLog(Vehicle.class);
 
     @Resource
@@ -38,6 +41,11 @@ public class Vehicle extends BufferedImageEntity implements KeyListener {
 
     public void setUpVehicle(){
         vehicleEngine.setGearBox(gearBox);
+        //FIXME: find a way to cal calculate these based on vehicle size. We only set this location once
+        frontTyre = new DefaultTyre(gameSetting);
+        backTyre = new DefaultTyre(gameSetting);
+
+
     }
 
     private void pressAccelerator(){
@@ -100,7 +108,7 @@ public class Vehicle extends BufferedImageEntity implements KeyListener {
     }
 
     public void setDefaultLocation(int xPos, int groundStartPos){
-        int carImageOffset = 25;//temp fix because of poor images
+        int carImageOffset = tyreHeight * -1;// multiple with minus to add room bellow for the tye which is rendered separately
 
         super.setLocation(xPos,
                 (groundStartPos - (gameSetting.getTileSize() * getHeightFactor()) + carImageOffset)); // offset by 10
@@ -109,7 +117,7 @@ public class Vehicle extends BufferedImageEntity implements KeyListener {
     //FIXME in future we can decide for a more dynamic way of know whether to make the facter 1 or more
     @Override
     public int getWidthFactor() {
-        return 4;
+        return 7;
     }
     //FIXME in future we can decide for a more dynamic way of know whether to make the facter 1 or more
     @Override
@@ -126,6 +134,15 @@ public class Vehicle extends BufferedImageEntity implements KeyListener {
     public void update() {
         vehicleEngine.updateSpeed();
         setLocation(getNextXPosBySpeed(), yPos);
+
+        //FIXME: find a way to cal calculate these based on vehicle size. We only set this location once. the rotate
+        // needs to go with the car speed
+        frontTyre.setLocation(272, yPos + 63);
+        backTyre.setLocation(68, yPos + 63);
+        frontTyre.update();
+        backTyre.update();
+
+        //fix me update tyre position as well
     }
 
     private int getNextXPosBySpeed(){
@@ -137,12 +154,13 @@ public class Vehicle extends BufferedImageEntity implements KeyListener {
     @Override
     protected int getCustomXDrawPosOrDefault(){
 
-        int customXPos = xPos;
+        return 10;
+    }
 
-        if(customXPos > 100){
-            customXPos =  100;
-        }
-
-        return customXPos;
+    @Override
+    public void draw(Graphics2D graphics2D){
+        super.draw(graphics2D);
+        frontTyre.draw(graphics2D);
+        backTyre.draw(graphics2D);
     }
 }

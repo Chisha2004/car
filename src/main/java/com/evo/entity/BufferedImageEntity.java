@@ -22,7 +22,9 @@ public abstract class BufferedImageEntity extends DrawableEntity{
     @Resource
     GameSetting gameSetting;
 
+    public BufferedImageEntity() {}
     public BufferedImageEntity(String fileName) {
+
         this.fileName = fileName;
 
         try{
@@ -56,7 +58,7 @@ public abstract class BufferedImageEntity extends DrawableEntity{
     }
 
     public void update() {
-
+        //must be overridden if needed
     }
 
     public abstract int getWidthFactor();
